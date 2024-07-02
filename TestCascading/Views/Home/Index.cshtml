@@ -1,0 +1,103 @@
+﻿@using TestCascading.Utilities
+@model Cascading
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="container">
+    <div class="text-center mt-4">
+        <h4>Cascading Form</h4>
+        <div class="d-flex justify-content-end">
+            <button type="button" class="btn btn-outline-secondary me-2" onclick="AddForm()">+ Add</button>
+            <button type="button" class="btn btn-outline-danger" onclick="RemoveForm()">- Remove</button>
+        </div>
+
+        <div id="formContainer" class="mt-4">
+            <form class="createForm">
+                <div id="form-container">
+                    @* form is in a partial view *@
+                </div>
+            </form>
+        </div>
+        <div class="d-flex justify-content-end">
+            <button type="button" class="btn btn-primary mt-4" id="submitBtn">Submit Data</button>
+        </div>
+    </div>
+</div>
+<hr />
+
+<div class="text-center">
+    <hr />
+    <h4>Cascaded Data</h4>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.State)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.District)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Ward)
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="Data-Container"> 
+                @* list is in a partial view  *@
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $.ajax({
+            url: "/Home/FormOnly",
+            type: "GET",
+            success: function (result) {
+                $("#form-container").html(result);
+            },
+            error: function (error) {
+                console.error("Error loading page:", error);
+            }
+        });
+
+        $.ajax({
+            url: "/Home/List",
+            type: "GET",
+            success: function (result) {
+                $("#Data-Container").html(result);
+            },
+            error: function (error) {
+                console.error("Error loading page:", error);
+            }
+        });
+    });
+
+    function AddForm() {
+        if ($('.createForm').length < 5) {
+            var originalForm = $('.createForm').first();
+            var clonedForm = originalForm.clone();
+            clonedForm.find('select').val('');
+            clonedForm.appendTo('#formContainer');
+            bindChangeEvents();
+        }
+        else {
+            alert("Max form limit is 5")
+        }
+    }
+
+    function RemoveForm() {
+        if ($('.createForm').length != 1) {
+            var parent = document.getElementById("formContainer");
+            parent.removeChild(parent.lastElementChild);
+        }
+
+        // $(".createForm select.state, .createForm select.district, .createForm select.ward").val('');
+        // $(".createForm:not(:first)").remove();
+    }
+</script>

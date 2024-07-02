@@ -1,0 +1,105 @@
+﻿@using TestCascading.Data
+@using TestCascading.Utilities
+ 
+<div class="row mt-2">
+    <div class="col-md-4">
+        <select name="StateId" class="form-control state" asp-items="@await GetUtilityData.GetAllStates()"></select>
+    </div>
+    <div class="col-md-4">
+        <select class="form-select district" name="DistrictId">
+            <option value="">Select District</option>
+        </select>
+    </div>
+    <div class="col-md-4">
+        <select class="form-select ward" name="WardId">
+            <option value="">Select Ward</option>
+        </select>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function bindChangeEvents() {
+        $('.state').change(function () {
+            var stateId = $(this).val();
+            var $districtsSelect = $(this).closest('form').find('.district');
+            var $wardsSelect = $(this).closest('form').find('.ward');
+
+            $.getJSON('@Url.Action("GetDistrict")', { stateId: stateId }, function (districts) {
+                $districtsSelect.empty().append($('<option/>', {
+                    text: "Select District"
+                }));
+                $.each(districts, function (index, district) {
+                    $districtsSelect.append($('<option/>', {
+                        value: district.value,
+                        text: district.text
+                    }));
+                });
+                $wardsSelect.empty().append($('<option/>', {
+                    text: "Select Ward"
+                }));
+            });
+        });
+
+        $('.district').change(function () {
+            var districtId = $(this).val();
+            var $wardsSelect = $(this).closest('form').find('.ward');
+            $.getJSON('@Url.Action("GetWard")', { districtId: districtId }, function (wards) {
+                $wardsSelect.empty().append($('<option/>', {
+                    text: "Select Ward"
+                }));
+                $.each(wards, function (index, ward) {
+                    $wardsSelect.append($('<option/>', {
+                        value: ward.value,
+                        text: ward.text
+                    }));
+                });
+            });
+        });
+    }
+
+    $(document).ready(function () {
+        bindChangeEvents();
+    });
+
+    $(document).ready(function () {
+        $("#submitBtn").click(function () {
+            var formData = [];
+            $(".createForm").each(function () {
+                var stateId = $(this).find(".state").val();
+                var districtId = $(this).find(".district").val();
+                var wardId = $(this).find(".ward").val();
+                formData.push({
+                    StateId: stateId,
+                    DistrictId: districtId,
+                    WardId: wardId
+                });
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "/Home/SaveData",
+                contentType: "application/json",
+                data: JSON.stringify(formData),
+                success: function (response) {
+                    $.ajax({
+                        url: "/Home/List",
+                        type: "GET",
+                        success: function (result) {
+                            if (response == "Invalid Data") {
+                                alert(response);
+                            }
+                            $("#Data-Container").html(result);
+                        },
+                        error: function (error) {
+                            console.error("Error loading page:", error);
+                        }
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+        });
+    });
+</script> 

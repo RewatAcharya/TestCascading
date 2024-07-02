@@ -1,0 +1,16 @@
+﻿@model IEnumerable<TestCascading.Models.Cascading>
+
+@foreach (var item in Model)
+{
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.State.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.District.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Ward.Name)
+        </td>
+    </tr>
+}

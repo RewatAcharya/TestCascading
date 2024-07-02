@@ -1,0 +1,103 @@
+﻿@* @using InterviewSathi.Web.Models
+@model PaginatedList<State> *@
+@model IEnumerable<State>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>States</h1>
+
+<p>
+    <a class="btn btn-primary" asp-action="Create" asp-controller="State" data-ajax="true" data-ajax-method="get" data-ajax-update="#page" data-bs-toggle="modal" data-bs-target="#staticBackdrop">New State</a>
+    <a class="btn btn-primary" asp-action="ExportExcel" asp-controller="State">Export</a>
+
+    <form asp-action="Index" asp-controller="State" method="get">
+        <div class="input-group">
+            <input name="searchName" type="text" placeholder="Search by State Name" class="form-control rounded-0">
+            <button type="submit" class="btn btn-primary btn-lg rounded-end">Search</button>
+        </div>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        Name
+                    </th>
+                    <th>
+                        Desc
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Description)
+                        </td>
+                        <td>
+                            <a class="btn btn-primary" asp-action="Edit" asp-route-id="@item.Id" asp-controller="State" data-ajax="true" data-ajax-method="get" data-ajax-update="#page" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Edit</a>
+                            <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog" id="page">
+        </div>
+    </div>
+
+    @*
+
+    <div class="pagination justify-content-center">
+    <nav aria-label="Page navigation">
+    <ul class="pagination pagination-sm">
+    @if (Model.HasPreviousPage)
+    {
+    <li class="page-item">
+    <a class="page-link" href="?page=@(Model.PageIndex - 1)" aria-label="Previous">
+    <span aria-hidden="true">&laquo;</span>
+    </a>
+    </li>
+    }
+    else
+    {
+    <li class="page-item disabled">
+    <span class="page-link" aria-hidden="true">&laquo;</span>
+    </li>
+    }
+
+    @for (int i = 1; i <= Model.TotalPages; i++)
+    {
+    <li class="page-item @(i == Model.PageIndex ? "active" : "")">
+    <a class="page-link" href="?page=@i">@i</a>
+    </li>
+    }
+
+    @if (Model.HasNextPage)
+    {
+    <li class="page-item">
+    <a class="page-link" href="?page=@(Model.PageIndex + 1)" aria-label="Next">
+    <span aria-hidden="true">&raquo;</span>
+    </a>
+    </li>
+    }
+    else
+    {
+    <li class="page-item disabled">
+    <span class="page-link" aria-hidden="true">&raquo;</span>
+    </li>
+    }
+    </ul>
+    </nav>
+    </div>
+    *@
